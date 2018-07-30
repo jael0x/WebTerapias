@@ -16,12 +16,14 @@ import models.Terapia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import services.PacienteService;
 import services.ServiceException;
+import validators.PacienteValidator;
 
 /**
  *
@@ -31,8 +33,11 @@ import services.ServiceException;
 @RequestMapping("/paciente")
 public class PacienteController {
 
-    @Autowired
+    @Autowired // Inyeccion de dependencias
     private PacienteService service;
+
+    @Autowired // Inyeccion de dependencias
+    private PacienteValidator validator;
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
@@ -98,14 +103,25 @@ public class PacienteController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(Model model, @ModelAttribute("paciente") Paciente paciente) {
+    public String create(Model model,
+            @ModelAttribute("paciente") Paciente paciente,
+            BindingResult errors) {
         try {
-            Calendar fechaNac = Calendar.getInstance();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            fechaNac.setTime(format.parse(paciente.getStrFecha()));
-            paciente.setFechaNacimiento(fechaNac.getTime());
-            service.create(paciente);
-            return "redirect:list.htm";
+
+            //Invocando a la validacion
+            validator.validate(paciente, errors);
+            if (errors.hasErrors()) {
+                model.addAttribute("paciente", paciente);
+                return "paciente/create";
+            } else {
+                Calendar fechaNac = Calendar.getInstance();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                fechaNac.setTime(format.parse(paciente.getStrFecha()));
+                paciente.setFechaNacimiento(fechaNac.getTime());
+                service.create(paciente);
+                return "redirect:list.htm";
+            }
+
         } catch (ParseException | ServiceException ex) {
             model.addAttribute("message", ex.getMessage());
             return "error";

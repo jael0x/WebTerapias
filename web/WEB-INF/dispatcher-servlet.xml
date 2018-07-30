@@ -20,8 +20,10 @@
     <context:component-scan base-package="models"/>
     <context:component-scan base-package="services"/>
     <context:component-scan base-package="controllers"/>
-    
+
+        
     <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping"/>
+    <bean class="validators.PacienteValidator"/>
 
     <!--
     Most controllers will use the ControllerClassNameHandlerMapping above, but
