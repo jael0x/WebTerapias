@@ -56,6 +56,17 @@ public class MedicoController {
         }
     }
     
+    @RequestMapping(value="/report", method= RequestMethod.GET)
+    public String report(Model model){
+        try{
+            return "medico/report";
+        }
+        catch(Exception ex){
+            model.addAttribute("message", ex.getMessage());
+            return "error";
+        }
+    }
+    
     @RequestMapping(value="/retrieve/{id}", method= RequestMethod.GET) //medico/retrieve/123.htm
     public String retrieve(Model model, @PathVariable String id){ //Los metodos en Spring Web MVC retornan un String
         try{

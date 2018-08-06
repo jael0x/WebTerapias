@@ -52,6 +52,9 @@
                 </c:forEach>
             </tbody>
         </table>
+        <button type="submit">
+                <a href="${pageContext.request.contextPath}/medico/report.htm" style="text-decoration: none; color: black">Imprimir</a>
+        </button>
         <button type="reset">
             <a href="${pageContext.request.contextPath}/index.htm" style="text-decoration: none; color: black">Atr&aacute;s</a>
         </button>
